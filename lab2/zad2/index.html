@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic Tac Toe</title>
+
+    <style>
+      body {
+        display: flex;
+        min-height: 100vh;
+        justify-content: center;
+        align-items: center;
+        background-color: #f3f3f3;
+      }
+      .cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        border-radius: 0.5rem;
+        height: 100px;
+        width: 100px;
+        box-shadow: 0px 2px 6px 0px #777;
+      }
+      #tictactoe {
+        padding: 2rem;
+        background: blac;
+        background-color: white;
+        border-radius: 1rem;
+        box-shadow: 0px 0px 10px 0px #888;
+      }
+      tr {
+        display: flex;
+        gap: 1rem;
+        margin: 1rem;
+      }
+      td {
+        font-size: 2rem;
+        font-family: "Poppins", sans-serif;
+        color: #f3f3f3;
+        transition: background-color 200ms cubic-bezier(0.47, 0, 0.745, 0.715);
+      }
+    </style>
+  </head>
+  <body>
+    <table id="tictactoe"></table>
+
+    <script src="./dist/bundle.js"></script>
+  </body>
+</html>
