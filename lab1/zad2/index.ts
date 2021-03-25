@@ -22,9 +22,13 @@ function logPerson(person: Person) {
 }
 
 function filterPersons(persons: Person[], criteria: any): Person[] {
-  let filteredPeople = persons.filter((el) => Object.values());
+  let filteredPeople = persons.filter((el) => Object.values(el));
 
   // TODO: zaimplementować funkcję, która przefiltruje tablicę persons za pomocą predykatu criteria
+  console.log(filteredPeople);
+  let costam = persons.map((el) => Object.values(el)).map((eli) => eli);
+
+  console.log(costam.map((ej) => `${ej}`).flat());
   return filteredPeople;
 }
 
