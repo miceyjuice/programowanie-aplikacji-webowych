@@ -5,12 +5,20 @@ export class Board {
   currentSymbol: number = 1;
   size: number;
   table: HTMLTableElement;
+  winnerBox: HTMLDivElement;
+  winnerText: HTMLParagraphElement | null;
+  gameResetBtn: HTMLButtonElement;
 
   constructor(size: number) {
     this.size = size;
     this.cells = new Array(size);
     this.table = <HTMLTableElement>document.getElementById("tictactoe");
+    this.gameResetBtn = <HTMLButtonElement>document.querySelector('.winner__reset');
     let i = 0;
+    this.gameResetBtn.addEventListener('click', () => window.location.reload());
+    this.winnerBox = <HTMLDivElement>document.querySelector('.winner');
+    this.winnerBox.style.display = 'none';
+    this.winnerText = document.querySelector('.message__symbol');
 
     for (let r = 0; r < size; r++) {
       let row = this.table.insertRow(r);
@@ -44,6 +52,7 @@ export class Board {
         this.cells[row * this.size].htmlElement.textContent ===
           this.cells[row * this.size + 2].htmlElement.textContent
       ) {
+        this.displayWinner(cell.textContent);
         console.log(`${cell.textContent} wygrał!`);
       }
       if (
@@ -52,6 +61,7 @@ export class Board {
         this.cells[col].htmlElement.textContent ===
           this.cells[col + this.size * 2].htmlElement.textContent
       ) {
+        this.displayWinner(cell.textContent);
         console.log(`${cell.textContent} wygrał!`);
       }
       if (row === col) {
@@ -61,6 +71,7 @@ export class Board {
           this.cells[0].htmlElement.textContent ===
             this.cells[8].htmlElement.textContent
         ) {
+          this.displayWinner(cell.textContent);
           console.log(`${cell.textContent} wygrał!`);
         }
       }
@@ -75,8 +86,15 @@ export class Board {
           this.cells[2].htmlElement.textContent ===
             this.cells[6].htmlElement.textContent
         ) {
+          this.displayWinner(cell.textContent);
           console.log(`${cell.textContent} wygrał!`);
         }
     }
+  }
+
+  displayWinner(winner: string | null){
+    this.table.classList.add('finished');
+    this.winnerBox.style.display = 'flex';
+    this.winnerText!.textContent = winner;
   }
 }
