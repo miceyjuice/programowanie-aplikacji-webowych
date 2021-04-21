@@ -1,58 +1,36 @@
-import { Game } from "../game.model";
-import { Board } from "./Board";
 import { Cell } from "./Cell";
 
-export class TicTacToe implements Game {
-  name: string;
+export class Board {
   cells: Cell[] | undefined;
   currentSymbol: number = 1;
   size: number;
-  table!: HTMLTableElement;
-  winnerText: HTMLParagraphElement;
+  table: HTMLTableElement;
+  winnerBox: HTMLDivElement;
+  winnerText: HTMLParagraphElement | null;
+  gameResetBtn: HTMLButtonElement;
 
-  constructor() {
-    this.name = "Kółko i krzyżyk";
-    this.size = 3;
-    this.cells = new Array(this.size);
-    this.winnerText = document.querySelector('.message__symbol')!;
-  }
-  getGameElement(): HTMLElement {
-    const game = <HTMLElement>document.querySelector('.game-container');
-    
-    return this.layoutChanges(game);
-  }
-
-  layoutChanges(game: HTMLElement): HTMLElement{
-    const gameInner = <HTMLElement>document.createElement('div');
-    gameInner.classList.add('game');
-    let i = 0;
-
-    gameInner.insertAdjacentHTML('afterbegin', '<table id="tictactoe"></table><div class="winner"><div class="winner__message"><p><span class="message__symbol"></span> is the winner!</p></div><button class="winner__reset">RESET</button></div>');
-    game.appendChild(gameInner);
+  constructor(size: number) {
+    this.size = size;
+    this.cells = new Array(size);
     this.table = <HTMLTableElement>document.getElementById("tictactoe");
-    console.log(document.getElementById("tictactoe"));
+    this.gameResetBtn = <HTMLButtonElement>document.querySelector('.winner__reset');
+    let i = 0;
+    this.gameResetBtn.addEventListener('click', () => window.location.reload());
+    this.winnerBox = <HTMLDivElement>document.querySelector('.winner');
+    this.winnerBox.style.display = 'none';
+    this.winnerText = document.querySelector('.message__symbol');
 
-    for (let r = 0; r < this.size; r++) {
-        let row = this.table?.insertRow(r);
-        for (let c = 0; c < this.size; c++) {
-          let cell = <HTMLTableDataCellElement>row?.insertCell(c);
-          if(cell){
-            cell.className = "cell";
-            const newCell = new Cell(cell);
-            if(this.cells) this.cells[i] = newCell;
-            cell.addEventListener("click", () => this.makeMove(newCell), false);
-          }
-          i++;
-        }
+    for (let r = 0; r < size; r++) {
+      let row = this.table.insertRow(r);
+      for (let c = 0; c < size; c++) {
+        let cell = <HTMLTableDataCellElement>row.insertCell(c);
+        cell.className = "cell";
+        const newCell = new Cell(cell);
+        this.cells[i] = newCell;
+        cell.addEventListener("click", () => this.makeMove(newCell), false);
+        i++;
       }
-
-    const gameResetBtn = <HTMLButtonElement>document.querySelector('.winner__reset');
-    gameResetBtn.addEventListener('click', () => window.location.reload());
-    
-    const winnerBox = <HTMLDivElement>document.querySelector('.winner');
-    winnerBox.style.display = 'none';
-
-    return gameInner;
+    }
   }
 
   makeMove(cell: Cell): void {
@@ -116,8 +94,7 @@ export class TicTacToe implements Game {
 
   displayWinner(winner: string | null){
     this.table.classList.add('finished');
-    let winnerBox = <HTMLDivElement>document.querySelector('.winner');
-    winnerBox.style.display = 'flex';
+    this.winnerBox.style.display = 'flex';
     this.winnerText!.textContent = winner;
   }
 }

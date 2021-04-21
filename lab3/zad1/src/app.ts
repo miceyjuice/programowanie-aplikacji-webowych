@@ -25,8 +25,10 @@ class App {
       item.appendChild(document.createTextNode(game.name));
       item.addEventListener("click", () => {
         gameContainer.innerHTML = "";
+        gameContainer.classList.add('game-container');
         gameContainer.appendChild(game.getGameElement());
       });
+      
       list.appendChild(item);
     }
 
