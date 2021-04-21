@@ -28,7 +28,10 @@ class App {
         gameContainer.classList.add('game-container');
         gameContainer.appendChild(game.getGameElement());
       });
-      
+      menuContainer.classList.add('gamesMenu');
+      list.classList.add('gamesMenu__list');
+      item.classList.add('list__element');
+
       list.appendChild(item);
     }
 

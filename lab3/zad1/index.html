@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
 
     <style>
-        body {
+      body {
         min-height: 100vh;
-        background-color: #1A1A1A;
+        background-color: #1a1a1a;
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
       }
       .cell {
         display: flex;
@@ -26,9 +27,10 @@
         font-size: 2rem;
         font-family: "Poppins", sans-serif;
         color: #f3f3f3;
-        transition: background-color 200ms cubic-bezier(0.47, 0, 0.745, 0.715), filter 300ms ease-in-out;
+        transition: background-color 200ms cubic-bezier(0.47, 0, 0.745, 0.715),
+          filter 300ms ease-in-out;
       }
-      .cell:hover{
+      .cell:hover {
         cursor: pointer;
         filter: brightness(85%);
       }
@@ -69,9 +71,10 @@
         box-shadow: 0px 0px 1rem #444;
         background: #0c2;
         color: #f3f3f3;
-        transition: box-shadow 250ms ease-in-out, background-color 250ms ease-in-out;
+        transition: box-shadow 250ms ease-in-out,
+          background-color 250ms ease-in-out;
       }
-      .winner__reset:hover{
+      .winner__reset:hover {
         cursor: pointer;
         box-shadow: 0px 0px 1.2rem #222;
         background: #0a2;
@@ -81,19 +84,39 @@
         justify-content: center;
         align-items: center;
       }
-      .finished{
+      .finished {
         filter: blur(5px) brightness(0.95);
         transition: blur 300ms ease-in-out;
       }
-      .message__symbol{
+      .message__symbol {
         font-weight: 600;
         color: #0c2;
         text-shadow: 0px 0px 5px #555;
       }
+      .gamesMenu {
+          width: 100%;
+      }
+
+      .gamesMenu > .gamesMenu__list {
+        list-style-type: none;
+        padding: 0;
+        color: #f3f3f3;
+        font-size: 3rem;
+        font-family: "Poppins", sans-serif;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+      .gamesMenu__list > .list__element {
+        text-align: center;
+        letter-spacing: 5px;
+      }
+      .gamesMenu__list > .list__element:hover{
+          cursor: pointer;
+          filter: brightness(75%) blur(1px);
+      }
     </style>
-</head>
-<body>
-    
+  </head>
+  <body>
     <script src="./dist/bundle.js"></script>
-</body>
+  </body>
 </html>
