@@ -9,7 +9,7 @@
     <style>
       body {
         min-height: 100vh;
-        background-color: #f3f3f3;
+        background-color: #1A1A1A;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -22,26 +22,28 @@
         border-radius: 0.5rem;
         height: 100px;
         width: 100px;
-        box-shadow: 0px 2px 6px 0px #777;
+        box-shadow: 0px 2px 6px 0px #111;
+        font-size: 2rem;
+        font-family: "Poppins", sans-serif;
+        color: #f3f3f3;
+        transition: background-color 200ms cubic-bezier(0.47, 0, 0.745, 0.715), filter 300ms ease-in-out;
+      }
+      .cell:hover{
+        cursor: pointer;
+        filter: brightness(85%);
       }
       #tictactoe {
         position: relative;
         padding: 2rem;
         background: blac;
-        background-color: white;
+        background-color: #222;
         border-radius: 1rem;
-        box-shadow: 0px 0px 10px 0px #888;
+        box-shadow: 0px 0px 10px 0px #333;
       }
       tr {
         display: flex;
         gap: 1rem;
         margin: 1rem;
-      }
-      td {
-        font-size: 2rem;
-        font-family: "Poppins", sans-serif;
-        color: #f3f3f3;
-        transition: background-color 200ms cubic-bezier(0.47, 0, 0.745, 0.715);
       }
       .winner {
         position: absolute;
