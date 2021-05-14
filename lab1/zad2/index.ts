@@ -21,14 +21,27 @@ function logPerson(person: Person) {
   console.log(`${person.name} ${person.surname} ${person.age} ${person.role}`);
 }
 
-function filterPersons(persons: Person[], criteria: any): Person[] {
-  let filteredPeople = persons.filter((el) => Object.values(el));
+interface ICriteria {
+  name?: string;
+  surname?: string;
+  age?: number;
+  role?: string;
+}
 
-  // TODO: zaimplementować funkcję, która przefiltruje tablicę persons za pomocą predykatu criteria
-  console.log(filteredPeople);
-  let costam = persons.map((el) => Object.values(el)).map((eli) => eli);
+function filterPersons(persons: Person[], criteria: ICriteria): Person[] {
 
-  console.log(costam.map((ej) => `${ej}`).flat());
+  let filteredPeople: Person[] = [];
+
+  for(const [key, value] of Object.entries(criteria)){
+    for(const person of persons){
+      if(Object.hasOwnProperty(key)){
+        if (value == person[key]){
+          filteredPeople.push(person);
+        }
+      }
+    }
+  }
+
   return filteredPeople;
 }
 
