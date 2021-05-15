@@ -1,0 +1,29 @@
+
+// FONT SIZES
+
+$header-font-size: 48px;
+
+// FONT WEIGHTS
+
+$header-font-weight: 900;
+
+// FONT COLORS
+
+$default-font-color: #f3f3f3;
+
+// BACKGROUND COLORS
+
+$main-bg-color: #1A1A1A;
+
+// CELLS COLORS
+
+$blue-cell-color: #486ccf;
+$green-cell-color: #31a849;
+
+
+:export {
+    defaultFontColor: $default-font-color;
+    mainBgColor: $main-bg-color;
+    blueCellColor: $blue-cell-color;
+    greenCellColor : $green-cell-color;
+  }
