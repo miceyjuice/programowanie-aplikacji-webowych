@@ -16,6 +16,25 @@ class App {
     const menuContainer = <HTMLDivElement>document.createElement("div"); // kontener menu dostępnych gier
     const gameContainer = <HTMLDivElement>document.createElement("div"); // kontener główny ekranu z grą
     const list = document.createElement("ul"); // lista pozycji w menu dostępnych gier
+    const checkbox = <HTMLInputElement>document.querySelector("input[name=mode]");
+    if(checkbox){
+      checkbox.addEventListener("change", function (this: HTMLInputElement) {
+        if (this.checked) {
+          trans();
+          document.documentElement.setAttribute("data-theme", "light");
+        } else {
+          trans();
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      });
+    }
+
+    let trans = () => {
+      document.documentElement.classList.add("transition");
+      window.setTimeout(() => {
+        document.documentElement.classList.remove("transition");
+      }, 1000);
+    };
 
     for (const gameKind of Object.keys(Games)) {
       if (isNaN(Number(gameKind))) {

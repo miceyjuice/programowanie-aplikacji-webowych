@@ -4,6 +4,7 @@
   "description": "",
   "main": "webpack.config.js",
   "dependencies": {
+    "copy-webpack-plugin": "^9.0.0",
     "css-loader": "^5.2.4",
     "sass": "^1.32.13",
     "sass-loader": "^11.1.1",

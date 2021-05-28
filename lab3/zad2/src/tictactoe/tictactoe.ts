@@ -14,43 +14,48 @@ export class TicTacToe implements Game {
     this.name = "Kółko i krzyżyk";
     this.size = 3;
     this.cells = new Array(this.size);
-    this.winnerText = document.querySelector('.message__symbol')!;
+    this.winnerText = document.querySelector(".message__symbol")!;
   }
   getGameElement(): HTMLElement {
-    const game = <HTMLElement>document.querySelector('.game-container');
-    
+    const game = <HTMLElement>document.querySelector(".game-container");
+
     return this.layoutChanges(game);
   }
 
-  layoutChanges(game: HTMLElement): HTMLElement{
-    const gameInner = <HTMLElement>document.createElement('div');
-    gameInner.classList.add('game');
+  layoutChanges(game: HTMLElement): HTMLElement {
+    const gameInner = <HTMLElement>document.createElement("div");
+    gameInner.classList.add("game");
     let i = 0;
 
-    gameInner.insertAdjacentHTML('afterbegin', '<table id="tictactoe"></table><div class="winner"><div class="winner__message"><p><span class="message__symbol"></span> is the winner!</p></div><button class="winner__reset">RESET</button></div>');
+    gameInner.insertAdjacentHTML(
+      "afterbegin",
+      '<table id="tictactoe"></table><div class="winner"><div class="winner__message"><p><span class="message__symbol"></span> is the winner!</p></div><button class="winner__reset">RESET</button></div>'
+    );
     game.appendChild(gameInner);
     this.table = <HTMLTableElement>document.getElementById("tictactoe");
     console.log(document.getElementById("tictactoe"));
 
     for (let r = 0; r < this.size; r++) {
-        let row = this.table?.insertRow(r);
-        for (let c = 0; c < this.size; c++) {
-          let cell = <HTMLTableDataCellElement>row?.insertCell(c);
-          if(cell){
-            cell.className = "cell";
-            const newCell = new Cell(cell);
-            if(this.cells) this.cells[i] = newCell;
-            cell.addEventListener("click", () => this.makeMove(newCell), false);
-          }
-          i++;
+      let row = this.table?.insertRow(r);
+      for (let c = 0; c < this.size; c++) {
+        let cell = <HTMLTableDataCellElement>row?.insertCell(c);
+        if (cell) {
+          cell.className = "cell";
+          const newCell = new Cell(cell);
+          if (this.cells) this.cells[i] = newCell;
+          cell.addEventListener("click", () => this.makeMove(newCell), false);
         }
+        i++;
       }
+    }
 
-    const gameResetBtn = <HTMLButtonElement>document.querySelector('.winner__reset');
-    gameResetBtn.addEventListener('click', () => window.location.reload());
-    
-    const winnerBox = <HTMLDivElement>document.querySelector('.winner');
-    winnerBox.style.display = 'none';
+    const gameResetBtn = <HTMLButtonElement>(
+      document.querySelector(".winner__reset")
+    );
+    gameResetBtn.addEventListener("click", () => window.location.reload());
+
+    const winnerBox = <HTMLDivElement>document.querySelector(".winner");
+    winnerBox.style.display = "none";
 
     return gameInner;
   }
@@ -114,11 +119,13 @@ export class TicTacToe implements Game {
     }
   }
 
-  displayWinner(winner: string | null){
-    this.table.classList.add('finished');
-    let winnerBox = <HTMLDivElement>document.querySelector('.winner');
-    let messageSymbol = <HTMLDivElement>document.querySelector('.message__symbol');
-    winnerBox.style.display = 'flex';
+  displayWinner(winner: string | null) {
+    this.table.classList.add("finished");
+    let winnerBox = <HTMLDivElement>document.querySelector(".winner");
+    let messageSymbol = <HTMLDivElement>(
+      document.querySelector(".message__symbol")
+    );
+    winnerBox.style.display = "flex";
     messageSymbol.textContent = winner;
   }
 }
