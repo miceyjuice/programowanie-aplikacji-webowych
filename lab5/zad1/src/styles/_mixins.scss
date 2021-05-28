@@ -1,0 +1,19 @@
+@mixin default-ul {
+  list-style-type: none;
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin font-awesome-icon($icon-code) {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  content: $icon-code;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  margin-right: 0.5em;
+  font-size: 0.95em;
+}
