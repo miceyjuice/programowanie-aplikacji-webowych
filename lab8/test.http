@@ -6,7 +6,7 @@ POST http://localhost:8080/products
 content-type: application/json
 
 {
-    "id": 2,
+    "id": 3,
     "name": "Telewizor",
     "description": "Telewizor plazmowy",
     "price": 5000
@@ -26,3 +26,27 @@ content-type: application/json
 
 ###
 DELETE http://localhost:8080/products/1
+
+###
+GET http://localhost:8080/categories
+
+###
+POST http://localhost:8080/categories
+content-type: application/json
+
+{
+    "id": 3,
+    "name": "Telewizory"
+}
+
+###
+PUT http://localhost:8080/categories
+content-type: application/json
+
+{
+    "id": 1,
+    "name": "Telewizorki"
+}
+
+###
+DELETE http://localhost:8080/categories/1
