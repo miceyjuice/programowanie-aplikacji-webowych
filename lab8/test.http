@@ -1,0 +1,28 @@
+###
+GET http://localhost:8080/products
+
+###
+POST http://localhost:8080/products
+content-type: application/json
+
+{
+    "id": 2,
+    "name": "Telewizor",
+    "description": "Telewizor plazmowy",
+    "price": 5000
+}
+
+
+###
+PUT http://localhost:8080/products
+content-type: application/json
+
+{
+    "id": 1,
+    "name": "Telewizor zmieniony",
+    "description": "Telewizor najnowszy plazmowy",
+    "price": 5000
+}
+
+###
+DELETE http://localhost:8080/products/1
