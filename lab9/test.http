@@ -1,0 +1,51 @@
+###
+GET http://localhost:8080/products
+
+###
+POST http://localhost:8080/products
+content-type: application/json
+
+{
+    "name": "Telewizor e132",
+    "description": "Telewizor plazmowy",
+    "price": 5000,
+    "category": "60c7d99f103af12f78d7a0d3"
+}
+
+
+###
+PUT http://localhost:8080/products
+content-type: application/json
+
+{
+    "id": "60c7ca6930735b307446ef7e",
+    "name": "Telewizor krzywy",
+    "description": "Telewizor najnowszy plazmowy, starszy",
+    "price": 5200
+}
+
+###
+DELETE http://localhost:8080/products/60c7d8f2103af12f78d7a0d2
+
+###
+GET http://localhost:8080/categories
+
+###
+POST http://localhost:8080/categories
+content-type: application/json
+
+{
+    "name": "Telewizory"
+}
+
+###
+PUT http://localhost:8080/categories
+content-type: application/json
+
+{
+    "id": "60c7d99f103af12f78d7a0d3",
+    "name": "Telewizory LCD"
+}
+
+###
+DELETE http://localhost:8080/categories/1
