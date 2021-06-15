@@ -5,7 +5,9 @@ const server = http.createServer();
 
 const socket = new websocket.Server({ server });
 socket.on("connection", function connection(ws) {
+  console.log('dziala');
   ws.on("message", (data: any) => {
+    console.log('dziala');
     let message;
     try {
       message = JSON.parse(data);

@@ -12,8 +12,10 @@ export class TicTacToe implements Game {
   gameState: string[];
   i: number;
   socket: WebSocket;
+  winnerState: boolean;
 
   constructor() {
+    this.winnerState = false;
     this.i = 0;
     this.gameState = [];
     this.name = "Kółko i krzyżyk";
@@ -22,9 +24,9 @@ export class TicTacToe implements Game {
     this.winnerText = document.querySelector(".message__symbol")!;
     this.socket = new WebSocket("ws://localhost:8080");
 
-    for (let i = 0; i < this.size * this.size; i++) {
-      this.gameState[i] = "";
-    }
+    this.gameState.fill("", 0, Math.pow(this.size, 2));
+
+    this.handleSocket();
   }
   getGameElement(): HTMLElement {
     const game = <HTMLElement>document.querySelector(".game-container");
@@ -41,6 +43,8 @@ export class TicTacToe implements Game {
       type: "NEW_MOVE",
       payload: {
         gameState: this.gameState,
+        currentSymbol: (this.currentSymbol = this.currentSymbol === 1 ? -1 : 1),
+        winnerState: this.winnerState,
       },
     };
     console.log(this.socket);
@@ -53,11 +57,23 @@ export class TicTacToe implements Game {
       alert("connected");
     };
     this.socket.onmessage = (data) => {
-      console.log(this.gameState);
-      console.log(JSON.parse(data.data).payload.gameState);
       this.gameState = JSON.parse(data.data).payload.gameState;
+      this.currentSymbol = JSON.parse(data.data).payload.currentSymbol;
+      this.winnerState = JSON.parse(data.data).payload.winnerState;
       this.renderTable(this.gameState);
+      if (this.winnerState) {
+        this.displayWinner(this.currentSymbol === 1 ? "O" : "X");
+        this.winnerState = false;
+      } else {
+        this.table.classList.remove("finished");
+        this.hideWinnerBox();
+      }
     };
+  }
+
+  hideWinnerBox(): void {
+    const winnerBox = <HTMLDivElement>document.querySelector(".winner");
+    winnerBox.style.display = "none";
   }
 
   layoutChanges(game: HTMLElement): HTMLElement {
@@ -76,17 +92,8 @@ export class TicTacToe implements Game {
     this.renderTable(this.gameState);
     console.log(this.gameState);
 
-    const gameResetBtn = <HTMLButtonElement>(
-      document.querySelector(".winner__reset")
-    );
+    this.hideWinnerBox();
 
-    const winnerBox = <HTMLDivElement>document.querySelector(".winner");
-    winnerBox.style.display = "none";
-
-    gameResetBtn.addEventListener("click", () => {
-      this.resetGame();
-      winnerBox.style.display = "none";
-    });
     return gameInner;
   }
 
@@ -95,6 +102,7 @@ export class TicTacToe implements Game {
     this.renderTable(this.gameState);
     this.table.classList.remove("finished");
     this.currentSymbol = 1;
+    this.sendData();
   }
 
   renderTable(gameState: string[]) {
@@ -139,7 +147,7 @@ export class TicTacToe implements Game {
 
     this.sendData();
     this.handleSocket();
-    
+
     this.currentSymbol = this.currentSymbol === 1 ? -1 : 1;
   }
 
@@ -161,7 +169,7 @@ export class TicTacToe implements Game {
           this.cells[row * this.size + 2].htmlElement.textContent
       ) {
         this.displayWinner(cell.textContent);
-        console.log(`${cell.textContent} wygrał!`);
+        this.winnerState = true;
       }
       if (
         this.cells[col].htmlElement.textContent ===
@@ -170,7 +178,7 @@ export class TicTacToe implements Game {
           this.cells[col + this.size * 2].htmlElement.textContent
       ) {
         this.displayWinner(cell.textContent);
-        console.log(`${cell.textContent} wygrał!`);
+        this.winnerState = true;
       }
       if (row === col) {
         if (
@@ -180,7 +188,7 @@ export class TicTacToe implements Game {
             this.cells[8].htmlElement.textContent
         ) {
           this.displayWinner(cell.textContent);
-          console.log(`${cell.textContent} wygrał!`);
+          this.winnerState = true;
         }
       }
       if (
@@ -195,18 +203,26 @@ export class TicTacToe implements Game {
             this.cells[6].htmlElement.textContent
         ) {
           this.displayWinner(cell.textContent);
-          console.log(`${cell.textContent} wygrał!`);
+          this.winnerState = true;
         }
     }
   }
 
   displayWinner(winner: string | null) {
     this.table.classList.add("finished");
-    let winnerBox = <HTMLDivElement>document.querySelector(".winner");
-    let messageSymbol = <HTMLDivElement>(
+    const winnerBox = <HTMLDivElement>document.querySelector(".winner");
+    const messageSymbol = <HTMLDivElement>(
       document.querySelector(".message__symbol")
+    );
+    const gameResetBtn = <HTMLButtonElement>(
+      document.querySelector(".winner__reset")
     );
     winnerBox.style.display = "flex";
     messageSymbol.textContent = winner;
+
+    gameResetBtn.addEventListener("click", () => {
+      this.resetGame();
+      winnerBox.style.display = "none";
+    });
   }
 }
