@@ -2,6 +2,12 @@ import { Game } from "../game.model";
 import { Board } from "./Board";
 import { Cell } from "./Cell";
 
+enum Options {
+  Load = 1,
+  Undo = 2,
+  Save = 3,
+}
+
 export class TicTacToe implements Game {
   name: string;
   cells: Cell[] | undefined;
@@ -17,21 +23,31 @@ export class TicTacToe implements Game {
   constructor() {
     this.winnerState = false;
     this.i = 0;
-    this.gameState = [];
-    this.name = "Kółko i krzyżyk";
     this.size = 3;
-    this.cells = new Array(this.size);
+    this.gameState = new Array<string>(Math.pow(this.size, 2)).fill("");
+    this.name = "Kółko i krzyżyk";
     this.winnerText = document.querySelector(".message__symbol")!;
     this.socket = new WebSocket("ws://localhost:8080");
 
-    this.gameState.fill("", 0, Math.pow(this.size, 2));
-
+    this.resetGameStateArray();
     this.handleSocket();
   }
+
+  init(): void {
+    this.size = Number(prompt("Podaj rozmiar planszy:", "3"));
+    this.cells = new Array(this.size);
+    this.gameState = new Array<string>(Math.pow(this.size, 2)).fill("");
+    this.resetGameStateArray();
+  }
+
   getGameElement(): HTMLElement {
     const game = <HTMLElement>document.querySelector(".game-container");
-
+    this.init();
     return this.layoutChanges(game);
+  }
+
+  resetGameStateArray(): void {
+    this.gameState.fill("", 0, Math.pow(this.size, 2));
   }
 
   isOpen(ws: WebSocket) {
@@ -47,7 +63,6 @@ export class TicTacToe implements Game {
         winnerState: this.winnerState,
       },
     };
-    console.log(this.socket);
     if (!this.isOpen(this.socket)) return;
     this.socket.send(JSON.stringify(messageObj));
   }
@@ -62,7 +77,7 @@ export class TicTacToe implements Game {
       this.winnerState = JSON.parse(data.data).payload.winnerState;
       this.renderTable(this.gameState);
       if (this.winnerState) {
-        this.displayWinner(this.currentSymbol === 1 ? "O" : "X");
+        this.displayWinner(this.isDraw() ? 'Nobody' : this.currentSymbol === 1 ? "O" : "X");
         this.winnerState = false;
       } else {
         this.table.classList.remove("finished");
@@ -77,32 +92,104 @@ export class TicTacToe implements Game {
   }
 
   layoutChanges(game: HTMLElement): HTMLElement {
+    this.resetGameStateArray();
     const gameInner = <HTMLElement>document.createElement("div");
     gameInner.classList.add("game");
     this.i = 0;
 
     gameInner.insertAdjacentHTML(
       "afterbegin",
-      '<table id="tictactoe"></table><div class="winner"><div class="winner__message"><p><span class="message__symbol"></span> is the winner!</p></div><button class="winner__reset">RESET</button></div>'
+      `<div class="game__options">
+        <div class="options__load btn">Load</div>
+        <div class="options__undo btn">Undo</div>
+        <div class="options__save btn">Save</div>
+      </div>
+      <table id="tictactoe"></table>
+        <div class="winner">
+          <div class="winner__message">
+            <p><span class="message__symbol"></span> is the winner!</p>
+          </div>
+            <button class="winner__reset">RESET</button>
+        </div>`
     );
     game.appendChild(gameInner);
     this.table = <HTMLTableElement>document.getElementById("tictactoe");
-    console.log(document.getElementById("tictactoe"));
+
+    document
+      .querySelector(".options__save")
+      ?.addEventListener("click", () => this.handleSave());
+    document
+      .querySelector(".options__undo")
+      ?.addEventListener("click", () => this.handleUndo());
+    document
+      .querySelector(".options__load")
+      ?.addEventListener("click", () => this.handleLoad());
 
     this.renderTable(this.gameState);
-    console.log(this.gameState);
 
     this.hideWinnerBox();
 
     return gameInner;
   }
 
+  renderAlert(message: string): void {
+    const content = `
+      <div class="popup-alert">
+        <p>
+          ${message}
+        </p>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML("afterbegin", content);
+
+    const alert: HTMLElement | null = document.querySelector(".popup-alert");
+
+    setTimeout(() => {
+      if (alert) document.body.removeChild(alert);
+    }, 2500);
+  }
+
+  customAlert(optionType: number): void {
+    switch (optionType) {
+      case Options.Load:
+        this.renderAlert("You have successfully loaded your last save!");
+        break;
+      case Options.Undo:
+        this.renderAlert("You have undone your last move / moves!");
+        break;
+      case Options.Save:
+        this.renderAlert("You have successfully saved your game progress!");
+        break;
+    }
+  }
+
+  handleSave(): void {
+    sessionStorage.setItem("gameState", JSON.stringify(this.gameState));
+    localStorage.setItem("gameState", JSON.stringify(this.gameState));
+    this.customAlert(Options.Save);
+  }
+
+  handleUndo(): void {
+    if (sessionStorage.getItem("gameState")) {
+      this.gameState = JSON.parse(sessionStorage.getItem("gameState")!);
+    } else this.resetGameStateArray();
+    this.renderTable(this.gameState);
+    this.customAlert(Options.Undo);
+  }
+
+  handleLoad(): void {
+    this.gameState = JSON.parse(localStorage.getItem("gameState")!);
+    this.renderTable(this.gameState);
+    this.customAlert(Options.Load);
+  }
+
   resetGame() {
-    this.gameState.fill("", 0, 9);
+    this.resetGameStateArray();
     this.renderTable(this.gameState);
     this.table.classList.remove("finished");
-    this.currentSymbol = 1;
     this.sendData();
+    this.currentSymbol = -1;
   }
 
   renderTable(gameState: string[]) {
@@ -139,10 +226,10 @@ export class TicTacToe implements Game {
 
     const row = Number(cell.htmlElement.classList[1].slice(0, 1));
     const column = Number(cell.htmlElement.classList[1].slice(1, 2));
-
     this.gameState[this.size * (row - 1) + (column - 1)] =
       cell.htmlElement.textContent;
 
+    console.log(this.gameState);
     this.checkWinner(cell.htmlElement);
 
     this.sendData();
@@ -152,13 +239,17 @@ export class TicTacToe implements Game {
   }
 
   isDraw() {
-    for (let i = 0; i < this.gameState.length; i++) {
-      if (this.gameState[i] === "") return false;
-    }
+    if (this.gameState.some((cell) => cell === "")) return false;
     return true;
   }
 
   checkWinner(cell: HTMLElement): void {
+    // for(let i = 0; i < this.size; i++){
+    //   for(let j = 0; j < this.size; j++){
+    //     if(this.gameState[i * this.size])
+    //   }
+    // }
+
     let col = (<HTMLTableCellElement>cell).cellIndex;
     let row = (<HTMLTableRowElement>cell.parentNode).rowIndex;
     if (this.cells) {
@@ -171,6 +262,7 @@ export class TicTacToe implements Game {
         this.displayWinner(cell.textContent);
         this.winnerState = true;
       }
+
       if (
         this.cells[col].htmlElement.textContent ===
           this.cells[col + this.size].htmlElement.textContent &&
@@ -180,6 +272,7 @@ export class TicTacToe implements Game {
         this.displayWinner(cell.textContent);
         this.winnerState = true;
       }
+
       if (row === col) {
         if (
           this.cells[0].htmlElement.textContent ===
@@ -191,6 +284,7 @@ export class TicTacToe implements Game {
           this.winnerState = true;
         }
       }
+
       if (
         (row === 0 && col === 2) ||
         (row === 1 && col === 1) ||
@@ -205,6 +299,11 @@ export class TicTacToe implements Game {
           this.displayWinner(cell.textContent);
           this.winnerState = true;
         }
+      if (this.isDraw()) {
+        console.log("REMIS");
+        this.displayWinner("Nobody");
+        this.winnerState = true;
+      }
     }
   }
 
