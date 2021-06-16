@@ -1,3 +1,5 @@
+import { gameLog } from "../decorators/gameLogCounter";
+import { moveCounter } from "../decorators/moveLogCounter";
 import { Game } from "../game.model";
 import { Board } from "./Board";
 import { Cell } from "./Cell";
@@ -40,6 +42,7 @@ export class TicTacToe implements Game {
     this.resetGameStateArray();
   }
 
+  @gameLog()
   getGameElement(): HTMLElement {
     const game = <HTMLElement>document.querySelector(".game-container");
     this.init();
@@ -77,7 +80,9 @@ export class TicTacToe implements Game {
       this.winnerState = JSON.parse(data.data).payload.winnerState;
       this.renderTable(this.gameState);
       if (this.winnerState) {
-        this.displayWinner(this.isDraw() ? 'Nobody' : this.currentSymbol === 1 ? "O" : "X");
+        this.displayWinner(
+          this.isDraw() ? "Nobody" : this.currentSymbol === 1 ? "O" : "X"
+        );
         this.winnerState = false;
       } else {
         this.table.classList.remove("finished");
@@ -220,6 +225,7 @@ export class TicTacToe implements Game {
     }
   }
 
+  @moveCounter()
   makeMove(cell: Cell): void {
     if (cell.htmlElement.textContent !== "") return;
     cell.setCellValue(this.currentSymbol);
