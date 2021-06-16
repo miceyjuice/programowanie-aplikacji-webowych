@@ -1,4 +1,4 @@
-export const gameLog = () => (target: any, name: string, descriptor: any) => {
+export const gameLog = () => (target: Object, propertyKey: string, descriptor: any) => {
     let originalMethod = descriptor.value;
     let counter = 0;
     descriptor.value = function (...args: any[]) {

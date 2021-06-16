@@ -170,17 +170,26 @@ export class TicTacToe implements Game {
   }
 
   handleSave(): void {
-    sessionStorage.setItem("gameState", JSON.stringify(this.gameState));
     localStorage.setItem("gameState", JSON.stringify(this.gameState));
     this.customAlert(Options.Save);
   }
 
   handleUndo(): void {
-    if (sessionStorage.getItem("gameState")) {
-      this.gameState = JSON.parse(sessionStorage.getItem("gameState")!);
-    } else this.resetGameStateArray();
-    this.renderTable(this.gameState);
-    this.customAlert(Options.Undo);
+    const sessionGameState = JSON.parse(sessionStorage.getItem("gameState")!);
+    console.log(sessionGameState);
+    console.log(this.gameState);
+    this.gameState = sessionGameState;
+    if (sessionGameState) {
+      this.currentSymbol = this.gameState.every(
+        (cell, idx) => cell === sessionGameState[idx]
+      )
+        ? this.currentSymbol === 1
+          ? -1
+          : 1
+        : this.currentSymbol;
+      this.renderTable(this.gameState);
+      this.customAlert(Options.Undo);
+    } else return;
   }
 
   handleLoad(): void {
@@ -195,6 +204,9 @@ export class TicTacToe implements Game {
     this.table.classList.remove("finished");
     this.sendData();
     this.currentSymbol = -1;
+    if (sessionStorage.length > 0) {
+      sessionStorage.clear();
+    }
   }
 
   renderTable(gameState: string[]) {
@@ -229,13 +241,13 @@ export class TicTacToe implements Game {
   makeMove(cell: Cell): void {
     if (cell.htmlElement.textContent !== "") return;
     cell.setCellValue(this.currentSymbol);
+    sessionStorage.setItem("gameState", JSON.stringify(this.gameState));
 
     const row = Number(cell.htmlElement.classList[1].slice(0, 1));
     const column = Number(cell.htmlElement.classList[1].slice(1, 2));
     this.gameState[this.size * (row - 1) + (column - 1)] =
       cell.htmlElement.textContent;
 
-    console.log(this.gameState);
     this.checkWinner(cell.htmlElement);
 
     this.sendData();
