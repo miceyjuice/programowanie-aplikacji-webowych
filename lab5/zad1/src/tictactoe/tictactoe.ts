@@ -2,6 +2,12 @@ import { Game } from "../game.model";
 import { Board } from "./Board";
 import { Cell } from "./Cell";
 
+enum Options {
+  Load = 1,
+  Undo = 2,
+  Save = 3,
+}
+
 export class TicTacToe implements Game {
   name: string;
   cells: Cell[] | undefined;
@@ -47,7 +53,6 @@ export class TicTacToe implements Game {
         winnerState: this.winnerState,
       },
     };
-    console.log(this.socket);
     if (!this.isOpen(this.socket)) return;
     this.socket.send(JSON.stringify(messageObj));
   }
@@ -98,43 +103,82 @@ export class TicTacToe implements Game {
     );
     game.appendChild(gameInner);
     this.table = <HTMLTableElement>document.getElementById("tictactoe");
-    console.log(document.getElementById("tictactoe"));
 
-    document.querySelector('.options__save')?.addEventListener('click', () => this.handleSave())
-    document.querySelector('.options__undo')?.addEventListener('click', () => this.handleUndo())
-    document.querySelector('.options__load')?.addEventListener('click', () => this.handleLoad())
+    document
+      .querySelector(".options__save")
+      ?.addEventListener("click", () => this.handleSave());
+    document
+      .querySelector(".options__undo")
+      ?.addEventListener("click", () => this.handleUndo());
+    document
+      .querySelector(".options__load")
+      ?.addEventListener("click", () => this.handleLoad());
 
     this.renderTable(this.gameState);
-    console.log(this.gameState);
 
     this.hideWinnerBox();
 
     return gameInner;
   }
 
+  renderAlert(message: string): void {
+    const content = `
+      <div class="popup-alert">
+        <p>
+          ${message}
+        </p>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML("afterbegin", content);
+
+    const alert: HTMLElement | null = document.querySelector(".popup-alert");
+
+    setTimeout(() => {
+      if (alert) document.body.removeChild(alert);
+    }, 2500);
+  }
+
+  customAlert(optionType: number): void {
+    switch (optionType) {
+      case Options.Load:
+        this.renderAlert("You have successfully loaded your last save!");
+        break;
+      case Options.Undo:
+        this.renderAlert("You have undone your last move / moves!");
+        break;
+      case Options.Save:
+        this.renderAlert("You have successfully saved your game progress!");
+        break;
+    }
+  }
+
   handleSave(): void {
-    console.log(this.gameState);
-    console.log(JSON.stringify(this.gameState));
-    sessionStorage.setItem('gameState', JSON.stringify(this.gameState));
-    localStorage.setItem('gameState', JSON.stringify(this.gameState));
+    sessionStorage.setItem("gameState", JSON.stringify(this.gameState));
+    localStorage.setItem("gameState", JSON.stringify(this.gameState));
+    this.customAlert(Options.Save);
   }
 
   handleUndo(): void {
-    this.gameState = JSON.parse(sessionStorage.getItem('gameState')!);
+    if (sessionStorage.getItem("gameState")) {
+      this.gameState = JSON.parse(sessionStorage.getItem("gameState")!);
+    } else this.gameState.fill("", 0, Math.pow(this.size, 2));
     this.renderTable(this.gameState);
+    this.customAlert(Options.Undo);
   }
 
   handleLoad(): void {
-    this.gameState = JSON.parse(localStorage.getItem('gameState')!);
+    this.gameState = JSON.parse(localStorage.getItem("gameState")!);
     this.renderTable(this.gameState);
+    this.customAlert(Options.Load);
   }
 
   resetGame() {
     this.gameState.fill("", 0, 9);
     this.renderTable(this.gameState);
     this.table.classList.remove("finished");
-    this.currentSymbol = 1;
     this.sendData();
+    this.currentSymbol = -1;
   }
 
   renderTable(gameState: string[]) {
